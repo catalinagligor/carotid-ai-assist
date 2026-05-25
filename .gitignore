@@ -1,0 +1,36 @@
+data/
+*.npy
+*.pth
+*.pkl
+*.h5
+*.joblib
+
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+
+venv/
+env/
+.env
+.venv/
+
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+.DS_Store           # Mac
+Thumbs.db           # Windows
+desktop.ini         # Windows
+
+
+dist/
+build/
+*.egg-info/
+
+*.log
