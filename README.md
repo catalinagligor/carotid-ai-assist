@@ -1,83 +1,89 @@
-# Analiză multimodală pentru risc cardiovascular
+# Multimodal Analysis for Cardiovascular Risk
 
-Acest proiect combină segmentarea imaginilor ecografice carotidiene cu clasificarea riscului cardiovascular pe baza datelor clinice. 
-## Dataseturi folosite
+This project combines segmentation of carotid ultrasound images with cardiovascular risk classification based on clinical data.
 
-Proiectul folosește două surse principale de date din Kaggle.
+## Datasets Used
 
-- Datele imagistice provin din datasetul **Carotid Ultrasound Images**: [Kaggle dataset](https://www.kaggle.com/datasets/orvile/carotid-ultrasound-images), care conține imagini ecografice ale arterei carotide și măști pentru segmentare.
-- Datele pentru clasificare provin din datasetul **Cardiovascular Disease dataset**: [Kaggle dataset](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset), care conține 70.000 de înregistrări de pacienți, 11 caracteristici și variabila țintă.
+The project uses two main data sources from Kaggle.
 
-În proiect, datele imagistice sunt salvate ca fișiere NumPy pentru train, validation și test, iar datele clinice sunt păstrate în fișiere CSV separate pentru aceleași subseturi. Pentru partea clinică sunt folosite variabile numerice si categorice.
+- The imaging data comes from the **Carotid Ultrasound Images** dataset: [Kaggle dataset](https://www.kaggle.com/datasets/orvile/carotid-ultrasound-images), which contains ultrasound images of the carotid artery and masks for segmentation.
+- The classification data comes from the **Cardiovascular Disease dataset**: [Kaggle dataset](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset), which contains 70,000 patient records, 11 features, and the target variable.
 
-## Modele antrenate
+In the project, the imaging data is saved as NumPy files for train, validation, and test splits, while the clinical data is kept in separate CSV files for the same subsets. For the clinical part, both numerical and categorical variables are used.
 
-### U-Net și Attention U-Net
-Pentru segmentarea imaginilor am folosit U-Net, o arhitectură clasică și eficientă pentru imagini medicale, apoi am comparat-o cu Attention U-Net. 
+## Trained Models
 
-Varianta Attention U-Net adaugă un mecanism de atenție care ajută modelul să se concentreze pe zonele relevante din imagine și poate reduce influența fundalului. Compararea celor două modele este utilă pentru a vedea dacă atenția aduce o îmbunătățire reală în segmentarea structurilor carotidiene.
+### U-Net and Attention U-Net
 
-U-Net a obținut:
+For image segmentation, I used U-Net, a classic and efficient architecture for medical images, and then compared it with Attention U-Net.
 
-**Best Val Dice de 0.966400**
+The Attention U-Net variant adds an attention mechanism that helps the model focus on relevant areas in the image and can reduce the influence of the background. Comparing the two models is useful to see whether attention brings a real improvement in segmenting carotid structures.
 
-**Last Train Loss 0.038777**
+U-Net achieved:
 
-**Last Val Loss 0.041145** 
+- **Best Val Dice:** 0.966400
+- **Last Train Loss:** 0.038777
+- **Last Val Loss:** 0.041145
 
-Attention U-Net a obținut:
+Attention U-Net achieved:
 
-**Best Val Dice de 0.967272**
+- **Best Val Dice:** 0.967272
+- **Last Train Loss:** 0.034791
+- **Last Val Loss:** 0.040028
 
-**Last Train Loss 0.034791**
-
-**Last Val Loss 0.040028** 
-
-
-Attention U-Net are un rezultat puțin mai bun pe validation și o valoare de loss mai mică la final, ceea ce sugerează o îmbunătățire modestă față de U-Net. 
-În plus, diferența de parametri este mică, deci câștigul vine mai degrabă din mecanismul de atenție decât dintr-o creștere mare a complexității modelului.
+Attention U-Net has a slightly better result on validation and a lower loss value at the end, suggesting a modest improvement over U-Net.  
+In addition, the difference in parameters is small, so the gain comes more from the attention mechanism than from a large increase in model complexity.
 
 ### XGBoost
 
-Pentru clasificarea riscului cardiovascular, modelul principal este **XGBoost**. 
+For cardiovascular risk classification, the main model is **XGBoost**.
 
-Acesta a fost ales deoarece funcționează foarte bine pe date tabulare și poate valorifica atât atributele clinice preprocesate, cât și reprezentările TF-IDF extrase din text.
+It was chosen because it performs very well on tabular data and can leverage both preprocessed clinical features and TF-IDF representations extracted from text.
 
-Pe validation, XGBoost obține Accuracy 0.7334, F1-Score 0.7183 și AUC-ROC 0.8014.
+On validation, XGBoost achieves:
+
+- **Accuracy:** 0.7334
+- **F1-Score:** 0.7183
+- **AUC-ROC:** 0.8014
 
 ### Logistic Regression
 
-**Logistic Regression** este folosită ca model baseline, pentru a compara performanța unui model simplu cu cea a modelului XGBoost.
-Pe validation, modelul obține Accuracy 0.7310, F1-Score 0.7122 și AUC-ROC 0.7935.
+**Logistic Regression** is used as a baseline model, to compare the performance of a simple model with that of the XGBoost model.
 
-## Structura proiectului
+On validation, the model achieves:
 
-Structura logică a proiectului este următoarea.
+- **Accuracy:** 0.7310
+- **F1-Score:** 0.7122
+- **AUC-ROC:** 0.7935
 
-- `notebooks/` — conține notebook-urile folosite pentru explorare, preprocesare, antrenare și evaluare:
+## Project Structure
+
+The logical structure of the project is as follows.
+
+- `notebooks/` — contains the notebooks used for exploration, preprocessing, training, and evaluation:
   - `01-carotid-eda.ipynb`
   - `02-preprocessing.ipynb`
   - `03-training.ipynb`
   - `04-evaluation.ipynb`
-- `app.py` — aplicația.
-- `requirements.txt` — dependențele Python necesare pentru rulare.
+- `app.py` — the application.
+- `requirements.txt` — the Python dependencies required to run the project.
 
-Notebook-ul de training încarcă datele, definește modelele, realizează antrenarea și salvează checkpoint-urile și rezultatele finale.
+The training notebook loads the data, defines the models, performs training, and saves the checkpoints and final results.
 
-## Fișiere generate
+## Generated Files
 
-La finalul rulării sunt salvate următoarele:
+At the end of the run, the following are saved:
 
-- `unet_best.pth` — cel mai bun model U-Net.
-- `unet_final.pth` — modelul U-Net final.
-- `attention_unet_best.pth` — cel mai bun model Attention U-Net.
-- `attention_unet_final.pth` — modelul Attention U-Net final.
-- `xgboost_model.pkl` — modelul principal de clasificare.
-- `logistic_regression.pkl` — modelul baseline.
-- `model_comparison.csv` — comparația metricilor.
-- `unet_training_curves.png` — curbele de antrenare pentru segmentare.
+- `unet_best.pth` — the best U-Net model.
+- `unet_final.pth` — the final U-Net model.
+- `attention_unet_best.pth` — the best Attention U-Net model.
+- `attention_unet_final.pth` — the final Attention U-Net model.
+- `xgboost_model.pkl` — the main classification model.
+- `logistic_regression.pkl` — the baseline model.
+- `model_comparison.csv` — metrics comparison.
+- `unet_training_curves.png` — training curves for segmentation.
 
-## Observații
+## Remarks
 
-Proiectul tratează separat partea imagistică și partea clinică, ceea ce îl face ușor de extins ulterior către o soluție multimodală completă.
-O direcție firească de dezvoltare este integrarea rezultatelor celor două componente într-un singur model final de predicție.
+The project treats the imaging part and the clinical part separately, which makes it easy to extend later toward a complete multimodal solution.  
+A natural direction for development is integrating the results of the two components into a single final prediction model.
